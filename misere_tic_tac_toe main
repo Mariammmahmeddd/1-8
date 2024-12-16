@@ -1,0 +1,59 @@
+#include "misere_tic_tac_toe.h"
+#include <cstdlib>
+#include <ctime>
+
+class HumanPlayer : public Player<char> {
+public:
+    HumanPlayer(string n, char symbol) : Player(n, symbol) {}
+    HumanPlayer(char symbol) : Player(symbol) {}
+
+    void getmove(int& x, int& y) override {
+        cout << "Enter your move (row and column): ";
+        cin >> x >> y;
+        x--;
+        y--;
+    }
+};
+
+class RandomAIPlayer : public RandomPlayer<char> {
+public:
+    RandomAIPlayer(char symbol) : RandomPlayer(symbol) {
+        srand(time(0));
+    }
+
+    void getmove(int& x, int& y) override {
+        x = rand() % 3;
+        y = rand() % 3;
+    }
+};
+
+int main() {
+    MisereTicTacToe board;
+
+    cout << "Welcome to Misere Tic Tac Toe!\n";
+    cout << "Choose your opponent:\n";
+    cout << "1. Play against another player\n";
+    cout << "2. Play against the computer\n";
+
+    int choice;
+    cin >> choice;
+
+    Player<char>* player1 = new HumanPlayer("Player 1", 'X');
+    Player<char>* player2;
+
+    if (choice == 1) {
+        player2 = new HumanPlayer("Player 2", 'O');
+    } else {
+        player2 = new RandomAIPlayer('O');
+    }
+
+    Player<char>* players[] = { player1, player2 };
+
+    GameManager<char> game(&board, players);
+    game.run();
+
+    delete player1;
+    delete player2;
+
+    return 0;
+}
